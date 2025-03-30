@@ -1,23 +1,10 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext } from "@tanstack/react-router";
-import {
-  HeadContent,
-  Link,
-  Outlet,
-  Scripts,
-  createRootRoute,
-} from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import {
-  ColorModeScript,
-  Container,
-  UIProvider,
-  VStack,
-} from "@yamada-ui/react";
+import { HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import { ColorModeScript, UIProvider } from "@yamada-ui/react";
 import * as React from "react";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
-import appCss from "~/styles/app.css?url";
 import { seo } from "~/utils/seo";
 
 export const Route = createRootRouteWithContext<{
@@ -39,7 +26,6 @@ export const Route = createRootRouteWithContext<{
       }),
     ],
     links: [
-      { rel: "stylesheet", href: appCss },
       {
         rel: "apple-touch-icon",
         sizes: "180x180",
@@ -85,7 +71,7 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning>
+    <html suppressHydrationWarning style={{ overflowY: "clip" }}>
       <head>
         <HeadContent />
       </head>

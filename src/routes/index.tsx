@@ -66,15 +66,20 @@ function Home() {
   }, [messages, handleScrollToBottom]);
 
   return (
-    <VStack w="full" minH="100svh">
-      <VStack as={ScrollArea} maxH="100svh" gap="0" my="0" ref={scrollAreaRef}>
+    <VStack w="full" maxH="100svh" overflowY="hidden">
+      <ScrollArea
+        innerProps={{ as: VStack }}
+        h="100svh"
+        my="0"
+        ref={scrollAreaRef}
+      >
         <For each={messages}>
           {(message) => (
             <MessageCard key={message.id} message={message} userId={userId} />
           )}
         </For>
         <Box minH="20" w="full" px="1rem" />
-      </VStack>
+      </ScrollArea>
       <VStack position="fixed" bottom="2xl" right="md" z={10} w="fit-content">
         <SettingsModal />
         <IconButton colorScheme="secondary" variant="subtle" rounded="full">
