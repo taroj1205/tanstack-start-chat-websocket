@@ -18,6 +18,13 @@ import {
   ContextMenuTrigger,
   MenuList,
   MenuItem,
+  useNotice,
+  useDisclosure,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Button,
 } from "@yamada-ui/react";
 import { db } from "~/db";
 import { format, isValid } from "date-fns";
@@ -34,10 +41,12 @@ interface MessageCardProps {
   message: Message;
   userId: string | undefined;
   handleDelete: ({ id }: { id: string }) => Promise<void>;
+  handlePurge: ({ userId }: { userId: string }) => Promise<void>;
 }
 
 export const MessageCard: FC<MessageCardProps> = memo(
-  ({ message, userId, handleDelete }) => {
+  ({ message, userId, handleDelete, handlePurge }) => {
+    const { open, onClose, onOpen } = useDisclosure();
     const isOwnMessage = message.senderId === userId;
 
     // Format createdAt safely
@@ -300,7 +309,37 @@ export const MessageCard: FC<MessageCardProps> = memo(
           >
             Delete
           </MenuItem>
+          <MenuItem
+            color="danger"
+            onClick={() => {
+              onOpen();
+            }}
+          >
+            Purge User Messages
+          </MenuItem>
         </MenuList>
+
+        <Modal open={open} onClose={onClose}>
+          <ModalHeader>Confirm Purge Messages</ModalHeader>
+          <ModalBody>
+            Are you sure you want to delete all messages from{" "}
+            {message.senderName}? This action cannot be undone.
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={onClose} variant="ghost">
+              Cancel
+            </Button>
+            <Button
+              colorScheme="danger"
+              onClick={async () => {
+                await handlePurge({ userId: message.senderId });
+                onClose();
+              }}
+            >
+              Purge
+            </Button>
+          </ModalFooter>
+        </Modal>
       </ContextMenu>
     );
   }

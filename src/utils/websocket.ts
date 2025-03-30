@@ -4,6 +4,7 @@ import { Message } from "~/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
+import { useNotice } from "@yamada-ui/react";
 
 export function useMessaging(url: () => string) {
   const ref = useRef<WebSocket | null>(null);
@@ -12,6 +13,7 @@ export function useMessaging(url: () => string) {
   const [isConnected, setIsConnected] = useState(false);
   const retryCount = useRef(0);
   const maxRetries = 5;
+  const notice = useNotice({ variant: "subtle" });
 
   const handleDelete = useCallback(async ({ id }: { id: string }) => {
     try {
@@ -23,6 +25,29 @@ export function useMessaging(url: () => string) {
       );
     } catch (error) {
       console.error("Failed to delete message:", error);
+    }
+  }, []);
+
+  const handlePurge = useCallback(async ({ userId }: { userId: string }) => {
+    try {
+      await db.messages
+        .where("senderId")
+        .equals(userId)
+        .modify({ deletedAt: new Date().toISOString() });
+      notice({
+        title: "Messages Purged",
+        description: `All messages from ${userId} have been deleted.`,
+        status: "success",
+      });
+      queryClient.setQueryData(["messages"], (old: Message[] = []) =>
+        old.filter((m) => m.senderId !== userId)
+      );
+    } catch (error) {
+      notice({
+        title: "Error",
+        description: "Failed to purge messages.",
+        status: "error",
+      });
     }
   }, []);
 
@@ -240,5 +265,6 @@ export function useMessaging(url: () => string) {
     retryCount.current,
     maxRetries,
     handleDelete,
+    handlePurge,
   ] as const;
 }
