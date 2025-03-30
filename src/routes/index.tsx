@@ -7,20 +7,18 @@ import {
   Box,
   IconButton,
 } from "@yamada-ui/react";
-import { FC, memo, useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { MessageInput } from "~/components/message-input";
 import { MessageCard } from "~/components/message-card";
-import { ArrowDownIcon, CogIcon } from "@yamada-ui/lucide";
-import { Message } from "~/types";
-import { UILink } from "~/components/ui/link";
+import { ArrowDownIcon } from "@yamada-ui/lucide";
 import { useMessaging } from "~/utils/websocket";
 import { SettingsModal } from "~/components/settings-modal";
 
 export const Route = createFileRoute("/")({
-  component: Home,
+  component: RouteComponent,
 });
 
-function Home() {
+function RouteComponent() {
   const isProd = process.env.NODE_ENV === "production";
   const hostname = isProd ? "chat.poyo.jp" : "localhost:3000";
   const scrollAreaRef = useRef<HTMLDivElement>(null);
