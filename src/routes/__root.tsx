@@ -17,7 +17,7 @@ export const Route = createRootRouteWithContext<{
       },
       {
         name: "viewport",
-        content: "width=device-width, initial-scale=1",
+        content: "width=device-width, initial-scale=1, interactive-widget=resizes-content",
       },
       ...seo({
         title:
