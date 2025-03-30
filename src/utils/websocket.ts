@@ -80,6 +80,7 @@ export function useMessaging(url: () => string) {
     queryFn: async () => {
       return await db.messages
         .filter((message) => !message.deletedAt)
+        .distinct()
         .toArray();
     },
   });
