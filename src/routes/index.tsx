@@ -1,12 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  For,
-  ScrollArea,
-  VStack,
-  Bleed,
-  Box,
-  IconButton,
-} from "@yamada-ui/react";
+import { For, ScrollArea, VStack, Box, IconButton } from "@yamada-ui/react";
 import { useCallback, useEffect, useRef } from "react";
 import { MessageInput } from "~/components/message-input";
 import { MessageCard } from "~/components/message-card";
@@ -34,6 +27,7 @@ function RouteComponent() {
     retryCount,
     maxRetries,
     handleDelete,
+    handlePurge,
   ] = useMessaging(() => wsUrl);
 
   useEffect(() => {
@@ -79,6 +73,7 @@ function RouteComponent() {
               message={message}
               userId={userId}
               handleDelete={handleDelete}
+              handlePurge={handlePurge}
             />
           )}
         </For>
