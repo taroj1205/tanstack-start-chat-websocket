@@ -69,7 +69,7 @@ export function useMessaging(url: () => string) {
     },
   });
 
-  const { data: onlineCount = 0 } = useQuery({
+  const { data: onlineCount = 1 } = useQuery({
     queryKey: ["onlineCount"],
     queryFn: () => Promise.resolve(0),
     enabled: false, // Initially disabled as it's updated via WebSocket
@@ -117,12 +117,11 @@ export function useMessaging(url: () => string) {
           if (data.type === "join") {
             queryClient.setQueryData(
               ["onlineCount"],
-              (old: number = 0) => old + 1
+              (old: number = 1) => old + 1
             );
           } else {
-            queryClient.setQueryData(
-              ["onlineCount"],
-              (old: number = 0) => old - 1
+            queryClient.setQueryData(["onlineCount"], (old: number = 1) =>
+              Math.max(1, old - 1)
             );
           }
           return;
