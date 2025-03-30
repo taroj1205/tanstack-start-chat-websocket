@@ -57,7 +57,7 @@ export const MessageInput: FC<MessageInputProps> = memo(
           senderId: senderId,
           senderName,
           channelId: nanoid(),
-          timestamp: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
         });
         if (textareaRef.current) textareaRef.current.value = "";
       },
@@ -80,18 +80,12 @@ export const MessageInput: FC<MessageInputProps> = memo(
         position="fixed"
         bottom="0"
         left="0"
-        py="sm"
+        pb="sm"
         px="md"
         w="full"
         backdropFilter="blur(10px)"
       >
-        {isConnected ? (
-          onlineCount > 0 && (
-            <Center as={Tag} colorScheme="primary" w="fit-content">
-              {onlineCount} Online
-            </Center>
-          )
-        ) : (
+        {!isConnected && (
           <HStack gap="xs">
             <Center as={Tag} colorScheme="danger" w="fit-content">
               {retryCount > 0

@@ -13,6 +13,19 @@ export function useMessaging(url: () => string) {
   const retryCount = useRef(0);
   const maxRetries = 5;
 
+  const handleDelete = useCallback(async ({ id }: { id: string }) => {
+    try {
+      await db.messages.update(id, {
+        deletedAt: new Date().toISOString(),
+      });
+      queryClient.setQueryData(["messages"], (old: Message[] = []) =>
+        old.filter((m) => m.id !== id)
+      );
+    } catch (error) {
+      console.error("Failed to delete message:", error);
+    }
+  }, []);
+
   const connect = useCallback(() => {
     if (ref.current) {
       if (
@@ -65,7 +78,9 @@ export function useMessaging(url: () => string) {
   const { data: messages = [] } = useQuery({
     queryKey: ["messages"],
     queryFn: async () => {
-      return await db.messages.toArray();
+      return await db.messages
+        .filter((message) => !message.deletedAt)
+        .toArray();
     },
   });
 
@@ -114,16 +129,7 @@ export function useMessaging(url: () => string) {
         const data = JSON.parse(payload);
 
         if (("type" in data && data.type === "join") || data.type === "leave") {
-          if (data.type === "join") {
-            queryClient.setQueryData(
-              ["onlineCount"],
-              (old: number = 1) => old + 1
-            );
-          } else {
-            queryClient.setQueryData(["onlineCount"], (old: number = 1) =>
-              Math.max(1, old - 1)
-            );
-          }
+          queryClient.setQueryData(["onlineCount"], () => data.count);
           return;
         }
 
@@ -232,5 +238,6 @@ export function useMessaging(url: () => string) {
     connect,
     retryCount.current,
     maxRetries,
+    handleDelete,
   ] as const;
 }

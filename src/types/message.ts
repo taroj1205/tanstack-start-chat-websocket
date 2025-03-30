@@ -4,11 +4,13 @@ export interface Message {
   senderId: string;
   senderName: string;
   channelId: string; // This could be a channel ID or a user ID for direct messages
-  timestamp: string;
-  status?: 'sent' | 'delivered' | 'seen' | 'error';
+  createdAt: string;
+  updatedAt?: string;
+  deletedAt?: string;
+  status?: "sent" | "delivered" | "seen" | "error";
   isLocal?: boolean; // For messages that are only stored locally
   attachments?: {
-    type: 'image' | 'file';
+    type: "image" | "file";
     url: string;
     name: string;
     size?: number;
