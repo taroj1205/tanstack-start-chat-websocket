@@ -67,7 +67,7 @@ function RouteComponent() {
   return (
     <VStack w="full" maxH="100svh" overflowY="hidden">
       <ScrollArea
-        innerProps={{ as: VStack }}
+        innerProps={{ as: VStack, gap: "0" }}
         h="100svh"
         my="0"
         ref={scrollAreaRef}
@@ -86,7 +86,12 @@ function RouteComponent() {
       </ScrollArea>
       <VStack position="fixed" bottom="2xl" right="md" z={10} w="fit-content">
         <SettingsModal />
-        <IconButton colorScheme="secondary" variant="subtle" rounded="full">
+        <IconButton
+          onClick={handleScrollToBottom}
+          colorScheme="secondary"
+          variant="subtle"
+          rounded="full"
+        >
           <ArrowDownIcon />
         </IconButton>
       </VStack>
