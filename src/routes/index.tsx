@@ -33,6 +33,7 @@ function RouteComponent() {
     connect,
     retryCount,
     maxRetries,
+    handleDelete,
   ] = useMessaging(() => wsUrl);
 
   useEffect(() => {
@@ -73,7 +74,12 @@ function RouteComponent() {
       >
         <For each={messages}>
           {(message) => (
-            <MessageCard key={message.id} message={message} userId={userId} />
+            <MessageCard
+              key={message.id}
+              message={message}
+              userId={userId}
+              handleDelete={handleDelete}
+            />
           )}
         </For>
         <Box minH="20" w="full" px="1rem" />
