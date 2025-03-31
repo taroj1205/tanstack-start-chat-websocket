@@ -18,7 +18,6 @@ import {
   ContextMenuTrigger,
   MenuList,
   MenuItem,
-  useNotice,
   useDisclosure,
   Modal,
   ModalBody,
@@ -26,7 +25,6 @@ import {
   ModalHeader,
   Button,
 } from "@yamada-ui/react";
-import { db } from "~/db";
 import { format, isValid } from "date-fns";
 import {
   FileIcon,
@@ -36,12 +34,27 @@ import {
   CloudOffIcon,
   CircleAlertIcon,
 } from "@yamada-ui/lucide";
+import { UseMutateFunction } from "@tanstack/react-query";
 
 interface MessageCardProps {
   message: Message;
   userId: string | undefined;
-  handleDelete: ({ id }: { id: string }) => Promise<void>;
-  handlePurge: ({ userId }: { userId: string }) => Promise<void>;
+  handleDelete: UseMutateFunction<
+    void,
+    Error,
+    {
+      id: string;
+    },
+    unknown
+  >;
+  handlePurge: UseMutateFunction<
+    void,
+    Error,
+    {
+      userId: string;
+    },
+    unknown
+  >;
 }
 
 export const MessageCard: FC<MessageCardProps> = memo(

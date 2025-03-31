@@ -21,44 +21,45 @@ import { ReactNode } from "@tanstack/react-router";
 
 export const SettingsModal = memo(() => {
   const { open, onClose, onOpen } = useDisclosure();
-  const [userId, setUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
 
-  const createNewUser = useCallback(async () => {
-    const newId = nanoid();
-    await db.users.add({
-      id: newId,
-      username: "User",
-      lastSeen: new Date().toISOString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      status: "online",
-    });
-    setUserId(newId);
-    return newId;
-  }, []);
+  const { data: userId } = useQuery({
+    queryKey: ["userId"],
+    queryFn: async () => {
+      const storedUserId = localStorage.getItem("userId");
+      if (!storedUserId) {
+        const newId = nanoid();
+        await db.users.add({
+          id: newId,
+          username: "User",
+          lastSeen: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          status: "online",
+        });
+        localStorage.setItem("userId", newId);
+        return newId;
+      }
 
-  const checkUserId = useCallback(async () => {
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-      const newId = await createNewUser();
-      localStorage.setItem("userId", newId);
-      return newId;
-    }
-    const user = await db.users.where("id").equals(userId).first();
-    if (!user) {
-      const newId = await createNewUser();
-      localStorage.setItem("userId", newId);
-      return newId;
-    }
-    setUserId(userId);
-    return userId;
-  }, [createNewUser]);
+      const user = await db.users.where("id").equals(storedUserId).first();
+      if (!user) {
+        const newId = nanoid();
+        await db.users.add({
+          id: newId,
+          username: "User",
+          lastSeen: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          status: "online",
+        });
+        localStorage.setItem("userId", newId);
+        return newId;
+      }
 
-  useEffect(() => {
-    checkUserId();
-  }, [checkUserId]);
+      return storedUserId;
+    },
+  });
 
   const { data: currentUser } = useQuery({
     queryKey: ["currentUser", userId],

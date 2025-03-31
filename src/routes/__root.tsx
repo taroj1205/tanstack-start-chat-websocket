@@ -3,8 +3,8 @@ import { createRootRouteWithContext } from "@tanstack/react-router";
 import { HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { ColorModeScript, UIProvider } from "@yamada-ui/react";
 import * as React from "react";
-import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
-import { NotFound } from "~/components/NotFound";
+import { DefaultCatchBoundary } from "~/components/default-catch-boundary";
+import { NotFound } from "~/components/not-found";
 import { seo } from "~/utils/seo";
 
 export const Route = createRootRouteWithContext<{
@@ -17,7 +17,8 @@ export const Route = createRootRouteWithContext<{
       },
       {
         name: "viewport",
-        content: "width=device-width, initial-scale=1, interactive-widget=resizes-content",
+        content:
+          "width=device-width, initial-scale=1, interactive-widget=resizes-content",
       },
       ...seo({
         title:
