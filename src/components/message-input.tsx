@@ -113,7 +113,6 @@ export const MessageInput: FC<MessageInputProps> = memo(
             name="message"
             placeholder="Type a message"
             ref={textareaRef}
-            bg={["white", "black"]}
             onKeyDown={handleKeyDown}
           />
           <IconButton type="submit" variant="subtle" colorScheme="primary">

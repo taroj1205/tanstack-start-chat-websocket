@@ -106,7 +106,7 @@ export const MessageCard: FC<MessageCardProps> = memo(
           py="sm"
           px="md"
           _hover={{
-            bg: ["blackAlpha.50", "whiteAlpha.50"],
+            bg: ["blackAlpha.100", "whiteAlpha.50"],
           }}
           transition="background 0.2s ease"
           borderRadius="md"
@@ -128,7 +128,7 @@ export const MessageCard: FC<MessageCardProps> = memo(
                 <Text
                   fontWeight="medium"
                   fontSize="sm"
-                  color={isOwnMessage ? "primary" : ["gray", "gray.400"]}
+                  color={isOwnMessage ? "primary" : "gray"}
                 >
                   {message.senderName}
                 </Text>
@@ -146,11 +146,7 @@ export const MessageCard: FC<MessageCardProps> = memo(
                 <Tooltip label={formattedDate} placement="top">
                   <Text
                     fontSize="xs"
-                    color={
-                      isOwnMessage
-                        ? ["primary", "primary.300"]
-                        : ["gray", "gray.400"]
-                    }
+                    color={isOwnMessage ? ["primary", "primary.300"] : "muted"}
                     whiteSpace="nowrap"
                   >
                     {formattedTime}
@@ -164,7 +160,7 @@ export const MessageCard: FC<MessageCardProps> = memo(
               bg={
                 isOwnMessage
                   ? ["primary.50", "primary.900"]
-                  : ["gray.50", "gray.800"]
+                  : ["blackAlpha.200", "whiteAlpha.50"]
               }
               borderWidth={1}
               borderColor={
@@ -176,19 +172,14 @@ export const MessageCard: FC<MessageCardProps> = memo(
               overflow="hidden"
               maxW="95%"
               boxShadow="sm"
-              transition="all 0.2s"
-              _hover={{
-                boxShadow: "md",
-                transform: "translateY(-1px)",
-              }}
             >
               <CardBody py="sm" px="md">
                 {/* Message text */}
                 {message.text && (
                   <Text
-                    color={["gray.800", "whiteAlpha.900"]}
                     wordBreak="break-word"
                     whiteSpace="pre-wrap"
+                    color={["gray.800", "whiteAlpha.900"]}
                   >
                     {message.text}
                   </Text>
