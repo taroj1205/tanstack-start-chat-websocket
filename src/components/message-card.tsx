@@ -62,16 +62,21 @@ export const MessageCard: FC<MessageCardProps> = memo(
     const { open, onClose, onOpen } = useDisclosure()
     const isOwnMessage = message.senderId === userId
 
-    // Format createdAt safely
     const formattedTime =
       message.createdAt && isValid(new Date(message.createdAt))
-        ? format(new Date(message.createdAt), "h:mm a")
+        ? format(new Date(message.createdAt), "HH:mm")
         : ""
 
     const formattedDate =
       message.createdAt && isValid(new Date(message.createdAt))
-        ? format(new Date(message.createdAt), "PPpp")
+        ? format(new Date(message.createdAt), "PP")
         : ""
+
+    const olderThan24Hours =
+      message.createdAt &&
+      isValid(new Date(message.createdAt)) &&
+      new Date().getTime() - new Date(message.createdAt).getTime() >
+        24 * 60 * 60 * 1000
 
     // Status icons
     const statusIcons = {
@@ -143,13 +148,18 @@ export const MessageCard: FC<MessageCardProps> = memo(
               <HStack gap="xs">
                 {message.status && statusIcons[message.status]}
 
-                <Tooltip label={formattedDate} placement="top">
+                <Tooltip
+                  label={`${formattedDate} ${formattedTime}`}
+                  placement="top"
+                >
                   <Text
                     fontSize="xs"
                     color={isOwnMessage ? ["primary", "primary.300"] : "muted"}
                     whiteSpace="nowrap"
                   >
-                    {formattedTime}
+                    {message.createdAt && olderThan24Hours
+                      ? formattedDate
+                      : formattedTime}
                   </Text>
                 </Tooltip>
               </HStack>

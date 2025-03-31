@@ -83,7 +83,6 @@ export const MessageInput: FC<MessageInputProps> = memo(
         pb="sm"
         px="md"
         w="full"
-        backdropFilter="blur(10px)"
       >
         {!isConnected && (
           <HStack gap="xs">
@@ -114,6 +113,7 @@ export const MessageInput: FC<MessageInputProps> = memo(
             placeholder="Type a message"
             ref={textareaRef}
             onKeyDown={handleKeyDown}
+            backdropFilter="blur(10px)"
           />
           <IconButton type="submit" variant="subtle" colorScheme="primary">
             <SendIcon />
