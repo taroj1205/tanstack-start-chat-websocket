@@ -1,24 +1,24 @@
 import {
-  For,
-  ScrollArea,
-  VStack,
   Box,
-  HStack,
-  Skeleton,
   Card,
   CardBody,
-} from "@yamada-ui/react";
-import { MessageCard } from "./message-card";
-import { Message } from "~/types";
-import { memo } from "react";
+  For,
+  HStack,
+  ScrollArea,
+  Skeleton,
+  VStack,
+} from "@yamada-ui/react"
+import { memo } from "react"
+import type { Message } from "~/types"
+import { MessageCard } from "./message-card"
 
 interface MessageListProps {
-  messages: Message[];
-  isMessagesLoading: boolean;
-  userId: string | undefined;
-  handleDelete: (params: { id: string }) => void;
-  handlePurge: (params: { userId: string }) => void;
-  scrollAreaRef: React.RefObject<HTMLDivElement | null>;
+  messages: Message[]
+  isMessagesLoading: boolean
+  userId: string | undefined
+  handleDelete: (params: { id: string }) => void
+  handlePurge: (params: { userId: string }) => void
+  scrollAreaRef: React.RefObject<HTMLDivElement | null>
 }
 
 export const MessageList = memo(function MessageList({
@@ -39,7 +39,12 @@ export const MessageList = memo(function MessageList({
       {isMessagesLoading ? (
         <VStack w="full" gap="0">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Card key={i} w="full" variant="unstyled" p="0">
+            <Card
+              key={`skeleton-${Date.now()}-${i}`}
+              w="full"
+              variant="unstyled"
+              p="0"
+            >
               <CardBody py="sm" px="md">
                 <HStack w="full" align="flex-start" gap="md">
                   <Skeleton rounded="full" w="40px" h="40px" />
@@ -72,5 +77,5 @@ export const MessageList = memo(function MessageList({
       )}
       <Box minH="20" w="full" px="1rem" />
     </ScrollArea>
-  );
-});
+  )
+})

@@ -57,5 +57,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd workspaces/taroj1205/chat
+            git pull
             docker compose pull
             docker compose up -d

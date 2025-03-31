@@ -1,77 +1,77 @@
-import { FC, memo, useCallback } from "react";
-import type { Message } from "~/types";
+import type { UseMutateFunction } from "@tanstack/react-query"
+import {
+  CheckCheckIcon,
+  CheckIcon,
+  CircleAlertIcon,
+  CloudOffIcon,
+  EyeIcon,
+  FileIcon,
+} from "@yamada-ui/lucide"
 import {
   Avatar,
   Box,
-  HStack,
-  Text,
-  VStack,
-  Image,
-  Icon,
-  Link,
-  Tooltip,
+  Button,
   Card,
   CardBody,
-  Skeleton,
-  Separator,
   ContextMenu,
   ContextMenuTrigger,
-  MenuList,
+  HStack,
+  Icon,
+  Image,
+  Link,
   MenuItem,
-  useDisclosure,
+  MenuList,
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader,
-  Button,
-} from "@yamada-ui/react";
-import { format, isValid } from "date-fns";
-import {
-  FileIcon,
-  CheckIcon,
-  CheckCheckIcon,
-  EyeIcon,
-  CloudOffIcon,
-  CircleAlertIcon,
-} from "@yamada-ui/lucide";
-import { UseMutateFunction } from "@tanstack/react-query";
+  Separator,
+  Skeleton,
+  Text,
+  Tooltip,
+  VStack,
+  useDisclosure,
+} from "@yamada-ui/react"
+import { format, isValid } from "date-fns"
+import { type FC, memo, useCallback } from "react"
+import type { Message } from "~/types"
 
 interface MessageCardProps {
-  message: Message;
-  userId: string | undefined;
+  message: Message
+  userId: string | undefined
   handleDelete: UseMutateFunction<
     void,
     Error,
     {
-      id: string;
+      id: string
     },
     unknown
-  >;
+  >
   handlePurge: UseMutateFunction<
     void,
     Error,
     {
-      userId: string;
+      userId: string
     },
     unknown
-  >;
+  >
 }
 
 export const MessageCard: FC<MessageCardProps> = memo(
   ({ message, userId, handleDelete, handlePurge }) => {
-    const { open, onClose, onOpen } = useDisclosure();
-    const isOwnMessage = message.senderId === userId;
+    const { open, onClose, onOpen } = useDisclosure()
+    const isOwnMessage = message.senderId === userId
 
     // Format createdAt safely
     const formattedTime =
       message.createdAt && isValid(new Date(message.createdAt))
         ? format(new Date(message.createdAt), "h:mm a")
-        : "";
+        : ""
 
     const formattedDate =
       message.createdAt && isValid(new Date(message.createdAt))
         ? format(new Date(message.createdAt), "PPpp")
-        : "";
+        : ""
 
     // Status icons
     const statusIcons = {
@@ -94,7 +94,7 @@ export const MessageCard: FC<MessageCardProps> = memo(
         />
       ),
       error: <CircleAlertIcon boxSize="xs" color="danger" />,
-    };
+    }
 
     return (
       <ContextMenu>
@@ -106,7 +106,7 @@ export const MessageCard: FC<MessageCardProps> = memo(
           py="sm"
           px="md"
           _hover={{
-            bg: ["blackAlpha.50", "whiteAlpha.50"],
+            bg: ["blackAlpha.100", "whiteAlpha.50"],
           }}
           transition="background 0.2s ease"
           borderRadius="md"
@@ -128,7 +128,7 @@ export const MessageCard: FC<MessageCardProps> = memo(
                 <Text
                   fontWeight="medium"
                   fontSize="sm"
-                  color={isOwnMessage ? "primary" : ["gray", "gray.400"]}
+                  color={isOwnMessage ? "primary" : "gray"}
                 >
                   {message.senderName}
                 </Text>
@@ -146,11 +146,7 @@ export const MessageCard: FC<MessageCardProps> = memo(
                 <Tooltip label={formattedDate} placement="top">
                   <Text
                     fontSize="xs"
-                    color={
-                      isOwnMessage
-                        ? ["primary", "primary.300"]
-                        : ["gray", "gray.400"]
-                    }
+                    color={isOwnMessage ? ["primary", "primary.300"] : "muted"}
                     whiteSpace="nowrap"
                   >
                     {formattedTime}
@@ -164,7 +160,7 @@ export const MessageCard: FC<MessageCardProps> = memo(
               bg={
                 isOwnMessage
                   ? ["primary.50", "primary.900"]
-                  : ["gray.50", "gray.800"]
+                  : ["blackAlpha.200", "whiteAlpha.50"]
               }
               borderWidth={1}
               borderColor={
@@ -176,19 +172,14 @@ export const MessageCard: FC<MessageCardProps> = memo(
               overflow="hidden"
               maxW="95%"
               boxShadow="sm"
-              transition="all 0.2s"
-              _hover={{
-                boxShadow: "md",
-                transform: "translateY(-1px)",
-              }}
             >
               <CardBody py="sm" px="md">
                 {/* Message text */}
                 {message.text && (
                   <Text
-                    color={["gray.800", "whiteAlpha.900"]}
                     wordBreak="break-word"
                     whiteSpace="pre-wrap"
+                    color={["gray.800", "whiteAlpha.900"]}
                   >
                     {message.text}
                   </Text>
@@ -204,8 +195,8 @@ export const MessageCard: FC<MessageCardProps> = memo(
                   >
                     {message.text && <Separator />}
 
-                    {message.attachments.map((attachment, index) => (
-                      <Box key={index} w="full">
+                    {message.attachments.map((attachment) => (
+                      <Box key={attachment.url || attachment.name} w="full">
                         {attachment.type === "image" ? (
                           <VStack align="flex-start" gap="xs">
                             <Image
@@ -325,7 +316,7 @@ export const MessageCard: FC<MessageCardProps> = memo(
           <MenuItem
             color="danger"
             onClick={() => {
-              onOpen();
+              onOpen()
             }}
           >
             Purge User Messages
@@ -345,8 +336,8 @@ export const MessageCard: FC<MessageCardProps> = memo(
             <Button
               colorScheme="danger"
               onClick={async () => {
-                await handlePurge({ userId: message.senderId });
-                onClose();
+                await handlePurge({ userId: message.senderId })
+                onClose()
               }}
             >
               Purge
@@ -354,8 +345,8 @@ export const MessageCard: FC<MessageCardProps> = memo(
           </ModalFooter>
         </Modal>
       </ContextMenu>
-    );
-  }
-);
+    )
+  },
+)
 
-MessageCard.displayName = "MessageCard";
+MessageCard.displayName = "MessageCard"

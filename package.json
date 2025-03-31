@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "vinxi dev",
     "build": "vinxi build",
-    "start": "vinxi start"
+    "start": "vinxi start",
+    "format": "biome format ./src",
+    "format:write": "biome format --write ./src",
+    "lint": "biome check ./src",
+    "lint:write": "biome check --write ./src"
   },
   "dependencies": {
     "@tanstack/react-form": "^1.2.1",
@@ -27,6 +31,7 @@
     "vinxi": "0.5.3"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@types/node": "^22.5.4",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
