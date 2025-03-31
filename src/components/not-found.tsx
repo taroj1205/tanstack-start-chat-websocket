@@ -1,25 +1,48 @@
-import { Link } from '@tanstack/react-router'
+import { Link } from "@tanstack/react-router";
+import {
+  Box,
+  Button,
+  Center,
+  Heading,
+  Text,
+  VStack,
+  Wrap,
+} from "@yamada-ui/react";
 
 export function NotFound({ children }: { children?: any }) {
   return (
-    <div className="space-y-2 p-2">
-      <div className="text-gray-600 dark:text-gray-400">
-        {children || <p>The page you are looking for does not exist.</p>}
-      </div>
-      <p className="flex items-center gap-2 flex-wrap">
-        <button
-          onClick={() => window.history.back()}
-          className="bg-emerald-500 text-white px-2 py-1 rounded uppercase font-black text-sm"
-        >
-          Go back
-        </button>
-        <Link
-          to="/"
-          className="bg-cyan-600 text-white px-2 py-1 rounded uppercase font-black text-sm"
-        >
-          Start Over
-        </Link>
-      </p>
-    </div>
-  )
+    <Center as={VStack} gap="lg" minH="100svh">
+      <Heading size="4xl" lineHeight={1}>
+        404
+      </Heading>
+      <Center as={VStack}>
+        <Text color="muted">
+          {children || (
+            <Text>The page you are looking for does not exist.</Text>
+          )}
+        </Text>
+        <Wrap gap="sm">
+          <Button
+            onClick={() => window.history.back()}
+            colorScheme="green"
+            textTransform="uppercase"
+            fontWeight="black"
+            size="sm"
+          >
+            Go back
+          </Button>
+          <Button
+            as={Link}
+            to="/"
+            colorScheme="cyan"
+            textTransform="uppercase"
+            fontWeight="black"
+            size="sm"
+          >
+            Start Over
+          </Button>
+        </Wrap>
+      </Center>
+    </Center>
+  );
 }
