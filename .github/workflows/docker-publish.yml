@@ -7,6 +7,9 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  # Deployment environment name (e.g., production, staging)
+  DEPLOYMENT_ENVIRONMENT: production
+  APP_URL: https://chat.poyo.jp/
 
 jobs:
   build-and-push:
@@ -14,6 +17,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      deployments: write # Required to create and update deployments
 
     steps:
       - name: Checkout repository
@@ -49,8 +53,34 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
+      - name: Create GitHub deployment
+        id: deployment
+        run: |
+          DEPLOYMENT_ID=$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/${{ github.repository }}/deployments \
+            -f ref="${{ github.ref }}" \
+            -f environment="${{ env.DEPLOYMENT_ENVIRONMENT }}" \
+            -f auto_merge=false \
+            -f required_contexts=[] \
+            --jq .id)
+          echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
+
+      - name: Update deployment status to pending
+        run: |
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/${{ github.repository }}/deployments/${{ steps.deployment.outputs.deployment_id }}/statuses \
+            -f state="pending" \
+            -f environment="${{ env.DEPLOYMENT_ENVIRONMENT }}" \
+            -f environment_url="${{ env.APP_URL }}"
+            -f description="Deployment started"
+
       - name: Deploy to production
         uses: appleboy/ssh-action@v1.0.0
+        id: deploy
         with:
           host: www2.poyo.jp
           username: app
@@ -60,3 +90,28 @@ jobs:
             git pull
             docker compose pull
             docker compose up -d
+            echo "DEPLOYED=true" >> $GITHUB_ENV
+
+      - name: Update deployment status to success
+        if: steps.deploy.outcome == 'success'
+        run: |
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/${{ github.repository }}/deployments/${{ steps.deployment.outputs.deployment_id }}/statuses \
+            -f state="success" \
+            -f environment="${{ env.DEPLOYMENT_ENVIRONMENT }}" \
+            -f environment_url="${{ env.APP_URL }}"
+            -f description="Deployment succeeded"
+
+      - name: Update deployment status to failure
+        if: steps.deploy.outcome == 'failure'
+        run: |
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/${{ github.repository }}/deployments/${{ steps.deployment.outputs.deployment_id }}/statuses \
+            -f state="failure" \
+            -f environment="${{ env.DEPLOYMENT_ENVIRONMENT }}" \
+            -f environment_url="${{ env.APP_URL }}"
+            -f description="Deployment failed"
