@@ -1,5 +1,4 @@
-import { Message } from "~/types";
-import { RefreshCwIcon, SendIcon } from "@yamada-ui/lucide";
+import { RefreshCwIcon, SendIcon } from "@yamada-ui/lucide"
 import {
   Center,
   HStack,
@@ -7,18 +6,19 @@ import {
   Tag,
   Textarea,
   VStack,
-} from "@yamada-ui/react";
-import { FC, memo, useCallback, useRef } from "react";
-import { nanoid } from "nanoid";
-import { db } from "~/db";
+} from "@yamada-ui/react"
+import { nanoid } from "nanoid"
+import { type FC, memo, useCallback, useRef } from "react"
+import { db } from "~/db"
+import type { Message } from "~/types"
 
 interface MessageInputProps {
-  sendMessage: (message: Omit<Message, "id">) => void;
-  onlineCount: number;
-  isConnected: boolean;
-  onReconnect: () => void;
-  retryCount: number;
-  maxRetries: number;
+  sendMessage: (message: Omit<Message, "id">) => void
+  onlineCount: number
+  isConnected: boolean
+  onReconnect: () => void
+  retryCount: number
+  maxRetries: number
 }
 
 export const MessageInput: FC<MessageInputProps> = memo(
@@ -30,27 +30,27 @@ export const MessageInput: FC<MessageInputProps> = memo(
     retryCount,
     maxRetries,
   }) => {
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null)
 
     const handleSubmit = useCallback(
       async (e?: React.FormEvent<HTMLDivElement>) => {
-        e?.preventDefault();
-        const message = textareaRef.current?.value;
+        e?.preventDefault()
+        const message = textareaRef.current?.value
 
-        if (!message || message.trim() === "") return;
+        if (!message || message.trim() === "") return
 
-        console.log("Sending message:", message);
+        console.log("Sending message:", message)
 
-        let senderId = localStorage.getItem("userId");
+        let senderId = localStorage.getItem("userId")
 
         if (!senderId) {
-          const newId = nanoid();
-          localStorage.setItem("userId", newId);
-          senderId = newId;
+          const newId = nanoid()
+          localStorage.setItem("userId", newId)
+          senderId = newId
         }
 
-        const user = await db.users.get(senderId);
-        const senderName = user?.username || "User";
+        const user = await db.users.get(senderId)
+        const senderName = user?.username || "User"
 
         sendMessage({
           text: message.slice(0, 1000),
@@ -58,21 +58,21 @@ export const MessageInput: FC<MessageInputProps> = memo(
           senderName,
           channelId: nanoid(),
           createdAt: new Date().toISOString(),
-        });
-        if (textareaRef.current) textareaRef.current.value = "";
+        })
+        if (textareaRef.current) textareaRef.current.value = ""
       },
-      [sendMessage]
-    );
+      [sendMessage],
+    )
 
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (event.key === "Enter" && event.shiftKey === false) {
-          event.preventDefault();
-          handleSubmit();
+          event.preventDefault()
+          handleSubmit()
         }
       },
-      [handleSubmit]
-    );
+      [handleSubmit],
+    )
 
     return (
       <VStack
@@ -120,8 +120,8 @@ export const MessageInput: FC<MessageInputProps> = memo(
           </IconButton>
         </HStack>
       </VStack>
-    );
-  }
-);
+    )
+  },
+)
 
-MessageInput.displayName = "MessageInput";
+MessageInput.displayName = "MessageInput"

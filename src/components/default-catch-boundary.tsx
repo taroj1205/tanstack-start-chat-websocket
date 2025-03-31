@@ -4,18 +4,18 @@ import {
   rootRouteId,
   useMatch,
   useRouter,
-} from "@tanstack/react-router";
-import type { ErrorComponentProps } from "@tanstack/react-router";
-import { Container, Center, HStack, VStack, Button } from "@yamada-ui/react";
+} from "@tanstack/react-router"
+import type { ErrorComponentProps } from "@tanstack/react-router"
+import { Button, Center, Container, HStack, VStack } from "@yamada-ui/react"
 
 export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
-  const router = useRouter();
+  const router = useRouter()
   const isRoot = useMatch({
     strict: false,
     select: (state) => state.id === rootRouteId,
-  });
+  })
 
-  console.error("DefaultCatchBoundary Error:", error);
+  console.error("DefaultCatchBoundary Error:", error)
 
   return (
     <Container minW="0" flex="1" p="lg">
@@ -25,7 +25,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
           <HStack gap="sm" alignItems="center" flexWrap="wrap">
             <Button
               onClick={() => {
-                router.invalidate();
+                router.invalidate()
               }}
               colorScheme="gray"
               textTransform="uppercase"
@@ -54,8 +54,8 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
                 fontWeight="black"
                 size="sm"
                 onClick={(e) => {
-                  e.preventDefault();
-                  window.history.back();
+                  e.preventDefault()
+                  window.history.back()
                 }}
               >
                 Go Back
@@ -65,5 +65,5 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
         </VStack>
       </Center>
     </Container>
-  );
+  )
 }

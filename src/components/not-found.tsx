@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router"
 import {
   Box,
   Button,
@@ -7,9 +7,10 @@ import {
   Text,
   VStack,
   Wrap,
-} from "@yamada-ui/react";
+} from "@yamada-ui/react"
+import type { ReactNode } from "react"
 
-export function NotFound({ children }: { children?: any }) {
+export function NotFound({ children }: { children?: ReactNode }) {
   return (
     <Center as={VStack} gap="lg" minH="100svh">
       <Heading size="4xl" lineHeight={1}>
@@ -44,5 +45,5 @@ export function NotFound({ children }: { children?: any }) {
         </Wrap>
       </Center>
     </Center>
-  );
+  )
 }

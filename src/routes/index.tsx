@@ -1,20 +1,23 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { VStack } from "@yamada-ui/react";
-import { MessageInput } from "~/components/message-input";
-import { useMessages } from "~/hooks/useMessages";
-import { useScrollBehavior } from "~/hooks/useScrollBehavior";
-import { useEffect } from "react";
-import { MessageList } from "~/components/message-list";
-import { ControlButtons } from "~/components/control-buttons";
+import { createFileRoute } from "@tanstack/react-router"
+import { VStack } from "@yamada-ui/react"
+import { useEffect } from "react"
+import { ControlButtons } from "~/components/control-buttons"
+import { MessageInput } from "~/components/message-input"
+import { MessageList } from "~/components/message-list"
+import { useMessages } from "~/hooks/useMessages"
+import { useScrollBehavior } from "~/hooks/useScrollBehavior"
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
-  const isProd = process.env.NODE_ENV === "production";
-  const hostname = isProd ? "chat.poyo.jp" : "localhost:3000";
-  const wsUrl = `ws${isProd ? "s" : ""}://${hostname}/ws`;
+  const isProd = process.env.NODE_ENV === "production"
+  const hostname = isProd ? "chat.poyo.jp" : "localhost:3000"
+  const wsUrl = `ws${isProd ? "s" : ""}://${hostname}/ws`
+
+  const { scrollAreaRef, handleScrollToBottom, scrollToBottomIfNeeded } =
+    useScrollBehavior()
 
   const {
     messages,
@@ -28,14 +31,15 @@ function RouteComponent() {
     maxRetries,
     handleDelete,
     handlePurge,
-  } = useMessages(() => wsUrl);
+  } = useMessages({
+    wsUrl: () => wsUrl,
+    scrollToBottom: scrollToBottomIfNeeded,
+  })
 
-  const { scrollAreaRef, handleScrollToBottom, scrollToBottomIfNeeded } =
-    useScrollBehavior();
-
+  // biome-ignore lint/correctness/useExhaustiveDependencies:  We want to scroll on message update
   useEffect(() => {
-    scrollToBottomIfNeeded();
-  }, [messages, scrollToBottomIfNeeded]);
+    scrollToBottomIfNeeded()
+  }, [messages, scrollToBottomIfNeeded])
 
   return (
     <VStack w="full" maxH="100svh" overflowY="hidden">
@@ -57,5 +61,5 @@ function RouteComponent() {
         maxRetries={maxRetries}
       />
     </VStack>
-  );
+  )
 }

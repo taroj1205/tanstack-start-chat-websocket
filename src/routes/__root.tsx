@@ -1,14 +1,14 @@
-import { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext } from "@tanstack/react-router";
-import { HeadContent, Outlet, Scripts } from "@tanstack/react-router";
-import { ColorModeScript, UIProvider } from "@yamada-ui/react";
-import * as React from "react";
-import { DefaultCatchBoundary } from "~/components/default-catch-boundary";
-import { NotFound } from "~/components/not-found";
-import { seo } from "~/utils/seo";
+import type { QueryClient } from "@tanstack/react-query"
+import { createRootRouteWithContext } from "@tanstack/react-router"
+import { HeadContent, Outlet, Scripts } from "@tanstack/react-router"
+import { ColorModeScript, UIProvider } from "@yamada-ui/react"
+import type * as React from "react"
+import { DefaultCatchBoundary } from "~/components/default-catch-boundary"
+import { NotFound } from "~/components/not-found"
+import { seo } from "~/utils/seo"
 
 export const Route = createRootRouteWithContext<{
-  queryClient: QueryClient;
+  queryClient: QueryClient
 }>()({
   head: () => ({
     meta: [
@@ -23,7 +23,8 @@ export const Route = createRootRouteWithContext<{
       ...seo({
         title:
           "TanStack Start | Type-Safe, Client-First, Full-Stack React Framework",
-        description: `TanStack Start is a type-safe, client-first, full-stack React framework. `,
+        description:
+          "TanStack Start is a type-safe, client-first, full-stack React framework. ",
       }),
     ],
     links: [
@@ -53,11 +54,11 @@ export const Route = createRootRouteWithContext<{
       <RootDocument>
         <DefaultCatchBoundary {...props} />
       </RootDocument>
-    );
+    )
   },
   notFoundComponent: () => <NotFound />,
   component: RootComponent,
-});
+})
 
 function RootComponent() {
   return (
@@ -67,12 +68,12 @@ function RootComponent() {
         <Outlet />
       </UIProvider>
     </RootDocument>
-  );
+  )
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning style={{ overflowY: "clip" }}>
+    <html lang="en" suppressHydrationWarning style={{ overflowY: "clip" }}>
       <head>
         <HeadContent />
       </head>
@@ -81,5 +82,5 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
-  );
+  )
 }

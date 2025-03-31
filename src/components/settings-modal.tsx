@@ -1,35 +1,35 @@
-import { CogIcon } from "@yamada-ui/lucide";
+import { useForm, useStore } from "@tanstack/react-form"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import type { ReactNode } from "@tanstack/react-router"
+import { CogIcon } from "@yamada-ui/lucide"
 import {
-  IconButton,
-  Modal,
-  ModalBody,
-  ModalHeader,
-  useDisclosure,
-  VStack,
-  FormControl,
-  Input,
   Button,
   Center,
+  FormControl,
+  IconButton,
+  Input,
+  Modal,
+  ModalBody,
   ModalFooter,
-} from "@yamada-ui/react";
-import { memo, useCallback, useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useForm, useStore } from "@tanstack/react-form";
-import { db } from "~/db";
-import { nanoid } from "nanoid";
-import { ReactNode } from "@tanstack/react-router";
+  ModalHeader,
+  VStack,
+  useDisclosure,
+} from "@yamada-ui/react"
+import { nanoid } from "nanoid"
+import { memo, useCallback, useEffect, useState } from "react"
+import { db } from "~/db"
 
 export const SettingsModal = memo(() => {
-  const { open, onClose, onOpen } = useDisclosure();
-  const [isLoading, setIsLoading] = useState(false);
-  const queryClient = useQueryClient();
+  const { open, onClose, onOpen } = useDisclosure()
+  const [isLoading, setIsLoading] = useState(false)
+  const queryClient = useQueryClient()
 
   const { data: userId } = useQuery({
     queryKey: ["userId"],
     queryFn: async () => {
-      const storedUserId = localStorage.getItem("userId");
+      const storedUserId = localStorage.getItem("userId")
       if (!storedUserId) {
-        const newId = nanoid();
+        const newId = nanoid()
         await db.users.add({
           id: newId,
           username: "User",
@@ -37,14 +37,14 @@ export const SettingsModal = memo(() => {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           status: "online",
-        });
-        localStorage.setItem("userId", newId);
-        return newId;
+        })
+        localStorage.setItem("userId", newId)
+        return newId
       }
 
-      const user = await db.users.where("id").equals(storedUserId).first();
+      const user = await db.users.where("id").equals(storedUserId).first()
       if (!user) {
-        const newId = nanoid();
+        const newId = nanoid()
         await db.users.add({
           id: newId,
           username: "User",
@@ -52,48 +52,48 @@ export const SettingsModal = memo(() => {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           status: "online",
-        });
-        localStorage.setItem("userId", newId);
-        return newId;
+        })
+        localStorage.setItem("userId", newId)
+        return newId
       }
 
-      return storedUserId;
+      return storedUserId
     },
-  });
+  })
 
   const { data: currentUser } = useQuery({
     queryKey: ["currentUser", userId],
     queryFn: async () => {
-      if (!userId) return null;
-      return await db.users.where("id").equals(userId).first();
+      if (!userId) return null
+      return await db.users.where("id").equals(userId).first()
     },
     enabled: !!userId,
-  });
+  })
 
   const form = useForm({
     defaultValues: {
       username: currentUser?.username || "",
     },
     onSubmit: async ({ value }) => {
-      if (!userId || !value.username.trim() || isLoading) return;
+      if (!userId || !value.username.trim() || isLoading) return
 
-      setIsLoading(true);
+      setIsLoading(true)
       try {
         await db.users.where("id").equals(userId).modify({
           username: value.username.trim(),
           updatedAt: new Date().toISOString(),
-        });
-        await queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-        onClose();
+        })
+        await queryClient.invalidateQueries({ queryKey: ["currentUser"] })
+        onClose()
       } catch (error) {
-        console.error("Failed to update username:", error);
+        console.error("Failed to update username:", error)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
     },
-  });
+  })
 
-  const formErrors = useStore(form.store, (formState) => formState.errors);
+  const formErrors = useStore(form.store, (formState) => formState.errors)
 
   return (
     <>
@@ -111,10 +111,10 @@ export const SettingsModal = memo(() => {
         size="xl"
         as="form"
         onSubmit={(e) => {
-          console.log("form submitted");
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
+          console.log("form submitted")
+          e.preventDefault()
+          e.stopPropagation()
+          form.handleSubmit()
         }}
       >
         <ModalHeader>Settings</ModalHeader>
@@ -128,10 +128,10 @@ export const SettingsModal = memo(() => {
                 name="username"
                 validators={{
                   onChange: ({ value }) => {
-                    if (!value) return "Username is required";
+                    if (!value) return "Username is required"
                     if (value.length < 2)
-                      return "Username must be at least 2 characters";
-                    return undefined;
+                      return "Username must be at least 2 characters"
+                    return undefined
                   },
                 }}
               >
@@ -173,7 +173,7 @@ export const SettingsModal = memo(() => {
         </ModalFooter>
       </Modal>
     </>
-  );
-});
+  )
+})
 
-SettingsModal.displayName = "SettingsModal";
+SettingsModal.displayName = "SettingsModal"

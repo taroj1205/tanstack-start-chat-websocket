@@ -1,10 +1,10 @@
-import { VStack, IconButton } from "@yamada-ui/react";
-import { ArrowDownIcon } from "@yamada-ui/lucide";
-import { SettingsModal } from "./settings-modal";
-import { memo } from "react";
+import { ArrowDownIcon } from "@yamada-ui/lucide"
+import { IconButton, VStack } from "@yamada-ui/react"
+import { memo } from "react"
+import { SettingsModal } from "./settings-modal"
 
 interface ControlButtonsProps {
-  handleScrollToBottom: () => void;
+  handleScrollToBottom: () => void
 }
 
 export const ControlButtons = memo(function ControlButtons({
@@ -22,5 +22,5 @@ export const ControlButtons = memo(function ControlButtons({
         <ArrowDownIcon />
       </IconButton>
     </VStack>
-  );
-});
+  )
+})
