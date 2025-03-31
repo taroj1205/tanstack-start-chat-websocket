@@ -5,6 +5,8 @@ import {
   Box,
   HStack,
   Skeleton,
+  Card,
+  CardBody,
 } from "@yamada-ui/react";
 import { MessageCard } from "./message-card";
 import { Message } from "~/types";
@@ -37,23 +39,22 @@ export const MessageList = memo(function MessageList({
       {isMessagesLoading ? (
         <VStack w="full" gap="0">
           {Array.from({ length: 5 }).map((_, i) => (
-            <HStack
-              key={i}
-              w="full"
-              align="flex-start"
-              gap="md"
-              py="sm"
-              px="md"
-            >
-              <Skeleton rounded="full" w="40px" h="40px" />
-              <VStack align="start" flex={1} gap="1">
-                <HStack w="full" justify="space-between">
-                  <Skeleton w="100px" h="20px" />
-                  <Skeleton w="60px" h="16px" />
+            <Card key={i} w="full" variant="unstyled" p="0">
+              <CardBody py="sm" px="md">
+                <HStack w="full" align="flex-start" gap="md">
+                  <Skeleton rounded="full" w="40px" h="40px" />
+                  <VStack align="start" flex={1} gap="1">
+                    <HStack w="full" justify="space-between" align="center">
+                      <HStack gap="2">
+                        <Skeleton w="120px" h="16px" />
+                      </HStack>
+                    </HStack>
+                    <Skeleton w="90%" h="16px" />
+                    <Skeleton w="60%" h="16px" />
+                  </VStack>
                 </HStack>
-                <Skeleton w="80%" h="20px" />
-              </VStack>
-            </HStack>
+              </CardBody>
+            </Card>
           ))}
         </VStack>
       ) : (
