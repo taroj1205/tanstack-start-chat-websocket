@@ -1,4 +1,4 @@
-name: Docker Build and Publish
+name: Docker Build, Publish and Deploy
 
 on:
   push:
@@ -48,3 +48,14 @@ jobs:
           context: .
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Deploy to production
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: www2.poyo.jp
+          username: app
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd workspaces/taroj1205/chat
+            docker compose pull
+            docker compose up -d
