@@ -60,28 +60,26 @@ jobs:
             git pull
             docker compose pull
             docker compose up -d
-            echo "DEPLOYMENT_STATUS=prod" >> $GITHUB_ENV
 
-      - name: Set deployment status to prod
-        if: env.DEPLOYMENT_STATUS == 'prod'
-        uses: actions/github-script@v6
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://chat.poyo.jp
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const deployment = await github.rest.repos.createDeployment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: context.ref,
-              environment: 'production',
-              required_contexts: [],
-            });
-
-            await github.rest.repos.createDeploymentStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              deployment_id: deployment.data.id,
-              state: 'success',
-              environment_name: 'production',
-              environment_url: 'https://chat.poyo.jp',
-              log_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
-            });
+          key: ${{ secrets.PROD_DEPLOY_SSH_KEY }}
+          name: id_rsa # optional
+          known_hosts: ${{ secrets.PROD_DEPLOY_SSH_KNOWN_HOSTS }}
+      - name: Deployment
+        run: rsync -avz --delete --exclude-from=.deployignore . ${{ secrets.PROD_DEPLOY_SSH_USER }}@${{ secrets.PROD_DEPLOY_SSH_HOST }}:${{ secrets.PROD_DEPLOY_TARGET_DIR }}
+      - name: Docker Management
+        run: |
+          ssh ${{ secrets.PROD_DEPLOY_SSH_USER }}@${{ secrets.PROD_DEPLOY_SSH_HOST }} 'cd ${{ secrets.PROD_DEPLOY_TARGET_DIR }} && docker compose run --rm app npm install'
+          ssh ${{ secrets.PROD_DEPLOY_SSH_USER }}@${{ secrets.PROD_DEPLOY_SSH_HOST }} 'cd ${{ secrets.PROD_DEPLOY_TARGET_DIR }} && docker compose up -d'
+          ssh ${{ secrets.PROD_DEPLOY_SSH_USER }}@${{ secrets.PROD_DEPLOY_SSH_HOST }} 'cd ${{ secrets.PROD_DEPLOY_TARGET_DIR }} && docker compose restart app'
