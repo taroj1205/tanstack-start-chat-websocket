@@ -80,5 +80,5 @@ jobs:
         run: rsync -avz --delete --exclude-from=.deployignore . ${{ secrets.PROD_DEPLOY_SSH_USER }}@${{ secrets.PROD_DEPLOY_SSH_HOST }}:${{ secrets.PROD_DEPLOY_TARGET_DIR }}
       - name: Docker Management
         run: |
-          ssh ${{ secrets.PROD_DEPLOY_SSH_USER }}@${{ secrets.PROD_DEPLOY_SSH_HOST }} 'cd ${{ secrets.PROD_DEPLOY_TARGET_DIR }} && docker compose pull
+          ssh ${{ secrets.PROD_DEPLOY_SSH_USER }}@${{ secrets.PROD_DEPLOY_SSH_HOST }} 'cd ${{ secrets.PROD_DEPLOY_TARGET_DIR }} && docker compose pull'
           ssh ${{ secrets.PROD_DEPLOY_SSH_USER }}@${{ secrets.PROD_DEPLOY_SSH_HOST }} 'cd ${{ secrets.PROD_DEPLOY_TARGET_DIR }} && docker compose up -d'
