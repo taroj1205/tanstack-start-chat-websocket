@@ -7,7 +7,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  # Deployment environment name (e.g., production, staging)
   DEPLOYMENT_ENVIRONMENT: production
   APP_URL: https://chat.poyo.jp/
 
@@ -65,7 +64,7 @@ jobs:
             -f ref="${{ github.ref }}" \
             -f environment="${{ env.DEPLOYMENT_ENVIRONMENT }}" \
             -f auto_merge=false \
-            -f required_contexts=[] \
+            -f required_contexts='[]' \
             --jq .id)
           echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
 
