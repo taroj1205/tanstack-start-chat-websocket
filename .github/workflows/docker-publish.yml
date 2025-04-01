@@ -17,7 +17,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-      deployments: write # Required to create and update deployments
+      deployments: write
 
     steps:
       - name: Checkout repository
@@ -55,6 +55,8 @@ jobs:
 
       - name: Create GitHub deployment
         id: deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           DEPLOYMENT_ID=$(gh api \
             -H "Accept: application/vnd.github+json" \
@@ -68,6 +70,8 @@ jobs:
           echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
 
       - name: Update deployment status to pending
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh api \
             -H "Accept: application/vnd.github+json" \
@@ -94,6 +98,8 @@ jobs:
 
       - name: Update deployment status to success
         if: steps.deploy.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh api \
             -H "Accept: application/vnd.github+json" \
@@ -106,6 +112,8 @@ jobs:
 
       - name: Update deployment status to failure
         if: steps.deploy.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh api \
             -H "Accept: application/vnd.github+json" \
